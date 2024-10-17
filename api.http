@@ -1,0 +1,4 @@
+//GET para obtener todas las producciones
+GET http://localhost:3000/producciones
+
+###

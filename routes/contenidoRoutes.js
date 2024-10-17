@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../conexion/database');
+const contenidoController = require('../controllers/contenidoController');
 
-// Routes for CRUD
-router.get('/', (req, res) => {
-    // Get all content
-});
+// Endpoint para obtener todas las producciones
+router.get('/producciones', contenidoController.getAllProducciones);
 
 router.get('/:id', (req, res) => {
     // Get content by ID
