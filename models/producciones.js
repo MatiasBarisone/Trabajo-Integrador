@@ -1,39 +1,50 @@
-const sequelize = require('../conexion/database');
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize')
+//conexion db
+const sequelize = require('../conexion/database')
 
-const Producciones = sequelize.define('Producciones', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
+
+//inicializamos producciones y definimos su contenido
+const producciones = sequelize.define('producciones', {
+id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  titulo: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  resumen: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  temporadas:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  poster: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  trailer:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  categoria_id:{
+    type: DataTypes.INTEGER,
+    references: {
+      model: 'categorias',
+      key: 'id'
     },
-    titulo: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-    },
-    resumen: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    temporadas: {
-        type: DataTypes.INTEGER,
-    },
-    poster: {
-        type: DataTypes.STRING(255),
-    },
-    trailer: {
-        type: DataTypes.STRING(255),
-    },
-    categoria_id: {
-        type: DataTypes.INTEGER,
-        references: {
-            model: 'categorias', // Asegúrate de que esta tabla existe
-            key: 'id',
-        },
-    },
+    allowNull: false,
+  }
+
+
+
+
 }, {
-  tableName: 'producciones',
-  timestamps: false
-});
+  tableName:'producciones',
+    timestamps: false,
+})
 
-module.exports = Producciones;
+module.exports = producciones;

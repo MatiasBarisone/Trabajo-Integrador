@@ -2,3 +2,16 @@
 GET http://localhost:3000/producciones
 
 ###
+POST http://localhost:3000/nuevaProduccion
+Content-Type: application/json
+
+{
+  "titulo": "Alice In Borderlands",
+  "resumen": "Un joven obsesionado con los videojuegos, junto a dos amigos, quedan atrapados en una extraña versión de Tokio donde deberán competir para sobrevivir.",
+  "temporadas": 3,
+  "poster": "/posters/nueva.jpg",
+  "trailer": "https://www.youtube.com/watch?v=4hIK-LF5-40",
+  "categoria_id": 1,
+  "generos": ["Ciencia Ficción", "Aventura"],
+  "reparto": ["1", "2"]
+}

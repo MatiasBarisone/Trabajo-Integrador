@@ -6,9 +6,8 @@ const contenidoController = require('../controllers/contenidoController');
 // Endpoint para obtener todas las producciones
 router.get('/producciones', contenidoController.getAllProducciones);
 
-router.get('/:id', (req, res) => {
-    // Get content by ID
-});
+// Endpoint para crear una produccion
+router.post('/nuevaProduccion', contenidoController.getCreateProducciones);
 
 router.post('/', (req, res) => {
     // Add new content
