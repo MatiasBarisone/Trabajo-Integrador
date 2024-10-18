@@ -9,17 +9,11 @@ router.get('/producciones', contenidoController.getAllProducciones);
 // Endpoint para crear una produccion
 router.post('/nuevaProduccion', contenidoController.getCreateProducciones);
 
-router.post('/', (req, res) => {
-    // Add new content
-});
+router.get('/producciones/:id', contenidoController.getProduccionById);
 
-router.put('/:id', (req, res) => {
-    // Update content by ID
-});
+router.put('/updateProduccion/:id', contenidoController. getProduccionUpdate);
 
-router.delete('/:id', (req, res) => {
-    // Delete content by ID
-});
+router.delete('/deleteProduccion/:id', contenidoController.deleteProduccionById);
 
 module.exports = router;
     

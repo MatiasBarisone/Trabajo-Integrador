@@ -60,8 +60,36 @@ Declaramos titulo, resumen, temporadas, poster, trailer, categoria_id.
 Try nuevaProduccion, Producciones.create y llamamos lo que habia declarado anteriormente.
 Status 200 si sale todo bien, por el contrario status 500 error al crear la produccion
 
+Hacemos un export.getProduccionById para buscar una produccion por el ID.
+Llamamos al ID.
+Hacemos un control de error 400 para que el id sea si o si numero positivo.
+Otro control de error 404 para produccion no encontrada.
+Status 200 y si esta todo bien devolvemos el json de la produccion.
+Manejo de errores por si hay errores de servidor (500).
+
+Hacemos un exports.getProduccionUpdate para poder actualizar una produccion.
+Llamamos al ID y hacemos que tome el parametro de la URL.
+Declaramos las instancias para poder actualizar la produccion.
+Control de error 400 para que el ID sea numero positivo.
+Actualizamos la produccion con Producciones.create.
+Verificamos si se actualizo la fila.
+Mostramos la produccion actualizada.
+Status 200 si sale todo bien.
+Error 500 error en servidor.
+
+Hacemos un exports.deleteProduccionById para borrar una produccion por ID.
+Obtenemos el ID por ULR.
+Control de error 400 para que el ID sea numero positivo.
+Buscamos la produccion con Producciones.findByPk.
+Verificamos si se encontro la produccion.
+Con produccion.destroy eliminamos dicha produccion.
+Status 200 Produccion eliminada correctamente.
+Error 500 de servidor.
 
 ### contenidoRoutes
 Declaramos express, router, llamamos a la db y a contenidoController asi podemos sincronizar.
-Get a /producciones para que traiga todas las producciones.
-Post a /nuevaProduccion para crear una nueva produccion.
+Get /producciones para que traiga todas las producciones.
+Post /nuevaProduccion para crear una nueva produccion.
+Get /producciones/:id para buscar producciones por ID.
+Put /updateProduccion/:id para actualizar produccion.
+delete /deleteProduccion/:id para borrar produccion.
