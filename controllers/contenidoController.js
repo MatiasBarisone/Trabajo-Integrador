@@ -1,147 +1,283 @@
-const Producciones = require('../models/producciones');
+const Producciones = require("../models/producciones");
+const Generos = require("../models/generos");
+const Reparto = require("../models/reparto");
 
-//Traer todas las producciones
-exports.getAllProducciones = async (req, res) => {
-    try {
-        const allProducciones = await producciones.findAll();
-        res.status(200).json(allProducciones);
-    } catch (error) {
-        res.status(500).json({ error: 'No se pudieron traer las producciones' });
+//Obtener todas las
+exports.getProducciones = async (req, res) => {
+  try {
+    const producciones = await Producciones.findAll({
+      include: [
+        {
+          model: Generos,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+        {
+          model: Reparto,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+      ],
+    });
+    if (producciones.length === 0) {
+      return res.status(404).json({ message: "No se encontraron producciones." });
     }
-};
-//Crear una produccion
-exports.getCreateProducciones = async (req, res) => {
-    const { titulo, resumen, temporadas, poster, trailer, categoria_id } = req.body; // Extraer datos del cuerpo de la solicitud
-
-    // Validación básica de campos requeridos
-    if (!titulo || typeof titulo !== 'string') {
-        return res.status(400).json({ error: 'El título es requerido y debe ser una cadena.' });
+    res.status(200).json(producciones);
+  } catch (error) {
+    console.error("Error al obtener las producciones:", error); // Log del error para depuración
+    if (error.name === 'SequelizeDatabaseError') {
+      return res.status(500).json({
+        message: "Error en la base de datos al obtener las producciones.",
+        error: error.message,
+      });
     }
-
-    if (categoria_id === undefined || typeof categoria_id !== 'number' || categoria_id < 0) {
-        return res.status(400).json({ error: 'La categoría es requerida y debe ser un número entero no negativo.' });
-    }
-
-    // Validación de temporadas (opcional) - debe ser un número entero no negativo o nulo
-    if (temporadas !== undefined) {
-        if (typeof temporadas !== 'number' || temporadas < 0) {
-            return res.status(400).json({ error: 'El número de temporadas debe ser un número entero no negativo o nulo.' });
-        }
-    }
-
-    // Validación de poster y trailer (opcional) - deben ser cadenas o nulos
-    if (poster !== undefined && typeof poster !== 'string') {
-        return res.status(400).json({ error: 'El poster debe ser una cadena o nulo.' });
-    }
-
-    if (trailer !== undefined && typeof trailer !== 'string') {
-        return res.status(400).json({ error: 'El trailer debe ser una cadena o nulo.' });
-    }
-
-    try {
-        // Crear una nueva producción en la base de datos
-        const nuevaProduccion = await Producciones.create({
-            titulo,
-            resumen,
-            temporadas,
-            poster,
-            trailer,
-            categoria_id
-        });
-
-        // Enviar respuesta exitosa
-        res.status(201).json({
-            message: 'Producción creada exitosamente',
-            produccion: nuevaProduccion
-        });
-    } catch (error) {
-        console.error('Error al crear la producción:', error); // Log del error en consola
-        res.status(500).json({ error: 'Error al crear la producción' });
-    }
+    res.status(500).json({
+      message: "Error interno al obtener las producciones.",
+      error: error.message,
+    });
+  }
 };
 
-// Obtener una Producción por ID
+
+// Crear una nueva producción
+exports.createProduccion = async (req, res) => {
+  const { generos, reparto, ...produccionData } = req.body; // Extraemos géneros y reparto del cuerpo de la solicitud
+
+  try {
+    // Creamos la nueva producción
+    const nuevaProduccion = await Producciones.create(produccionData);
+
+    // Asignamos géneros y reparto a la producción creada
+    if (generos && Array.isArray(generos) && generos.length > 0) {
+      await nuevaProduccion.setGeneros(generos); // Relacionamos géneros
+    }
+
+    if (reparto && Array.isArray(reparto) && reparto.length > 0) {
+      await nuevaProduccion.setRepartos(reparto); // Relacionamos reparto
+    }
+
+    // Buscamos nuevamente la producción con géneros y reparto incluidos
+    const produccionConRelaciones = await Producciones.findByPk(
+      nuevaProduccion.produccion_id,
+      {
+        include: [
+          {
+            model: Generos,
+            through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+          },
+          {
+            model: Reparto,
+            through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+          },
+        ],
+      }
+    );
+
+    res.status(201).json({
+      message: "Producción creada correctamente",
+      produccion: produccionConRelaciones,
+    });
+  } catch (error) {
+    console.error("Error al crear la producción:", error);
+    res.status(500).json({
+      message: "Error al crear la producción",
+    });
+  }
+};
+
+
+// Obtener una producción por ID
 exports.getProduccionById = async (req, res) => {
-    const { id } = req.params; // Extraer el ID de los parámetros de la solicitud
+  const { id } = req.params; // Extraemos el ID de los parámetros de la solicitud
+  try {
+    const produccion = await Producciones.findByPk(id, {
+      include: [
+        {
+          model: Generos,
+          through: { attributes: [] }, // Incluir los géneros
+        },
+        {
+          model: Reparto,
+          through: { attributes: [] }, // Incluir el reparto
+        },
+      ],
+    });
 
-    // Validación del ID: Verificar que sea un número válido y positivo
-    if (!id || isNaN(id) || id <= 0) {
-        return res.status(400).json({ error: 'El ID debe ser un número entero positivo válido.' });
+    if (produccion) {
+      res.status(200).json({
+        message: "Producción encontrada",
+        produccion,
+      });
+    } else {
+      res.status(404).json({ message: "Producción no encontrada" }); // Si no se encuentra, devolvemos error 404
     }
-
-    try {
-        // Buscar la producción por ID
-        const produccion = await Producciones.findByPk(id);
-
-        // Verificar si se encontró la producción
-        if (!produccion) {
-            return res.status(404).json({ error: 'Producción no encontrada.' });
-        }
-
-        // Enviar la producción encontrada
-        res.status(200).json(produccion);
-    } catch (error) {
-        console.error('Error al obtener la producción:', error); // Log del error en consola
-        res.status(500).json({ error: 'Error interno del servidor.' });
-    }
-};
-// Actualizar una Producción
-exports.getProduccionUpdate = async (req, res) => {
-    const id = parseInt(req.params.id, 10); // Obtener el ID de los parámetros de la URL
-    const { titulo, resumen, temporadas, poster, trailer, categoria_id } = req.body;
-
-    // Validación básica de ID y campos requeridos
-    if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ error: 'El ID debe ser un número entero positivo válido.' });
-    }
-
-    try {
-        // Intentar actualizar la producción
-        const [produccionToUpdate] = await Producciones.update(
-            { titulo, resumen, temporadas, poster, trailer, categoria_id },
-            { where: { id } }
-        );
-
-        // Verificar si se actualizó alguna fila
-        if (produccionToUpdate === 0) {
-            return res.status(404).json({ error: 'Producción no encontrada o no actualizada.' });
-        }
-
-        // Volver a obtener la producción actualizada
-        const produccion = await Producciones.findByPk(id);
-
-        // Enviar la producción actualizada
-        res.status(200).json(produccion);
-    } catch (error) {
-        console.error('Error al actualizar la producción:', error);
-        res.status(500).json({ error: 'Error al actualizar la producción.', message: `error: ${error.message}` });
-    }
+  } catch (error) {
+    console.error("Error al obtener la producción:", error);
+    res.status(500).json({ message: "Error al obtener la producción" });
+  }
 };
 
-exports.deleteProduccionById = async (req, res) => {
-    const id = parseInt(req.params.id, 10); // Obtener el ID de los parámetros de la URL y convertirlo en número
 
-    // Validación del ID
-    if (isNaN(id) || id <= 0) {
-        return res.status(400).json({ error: 'El ID debe ser un número entero positivo válido.' });
+// Actualizar una producción por ID
+exports.updateProduccion = async (req, res) => {
+  const { id } = req.params; // Extraemos el ID de los parámetros de la solicitud
+  const { generos, reparto, ...produccionData } = req.body; // Extraemos géneros, reparto y otros datos del cuerpo de la solicitud
+  
+  try {
+    const produccion = await Producciones.findByPk(id); // Buscamos la producción por ID
+    
+    if (produccion) {
+      await produccion.update(produccionData); // Actualizamos los datos de la producción
+
+      // Actualizamos géneros y reparto si se proporcionan
+      if (generos) {
+        await produccion.setGeneros(generos); // Actualizamos géneros
+      }
+      if (reparto) {
+        await produccion.setRepartos(reparto); // Actualizamos reparto
+      }
+
+      // Buscamos nuevamente la producción con las relaciones actualizadas
+      const produccionConRelaciones = await Producciones.findByPk(id, {
+        include: [
+          {
+            model: Generos,
+            through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+          },
+          {
+            model: Reparto,
+            through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+          },
+        ],
+      });
+
+      res.status(200).json({
+        message: "Producción actualizada correctamente",
+        produccion: produccionConRelaciones,
+      });
+    } else {
+      res.status(404).json({ message: "Producción no encontrada" }); // Si no se encuentra, devolvemos error 404
     }
+  } catch (error) {
+    console.error("Error al actualizar la producción:", error);
+    res.status(500).json({ message: "Error al actualizar la producción" });
+  }
+};
 
-    try {
-        // Buscar y eliminar la producción
-        const produccion = await Producciones.findByPk(id);
-
-        // Verificar si se encontró la producción
-        if (!produccion) {
-            return res.status(404).json({ error: 'Producción no encontrada.' });
-        }
-
-        // Eliminar la producción
-        await produccion.destroy();
-
-        // Respuesta exitosa
-        res.status(200).json({ message: 'Producción eliminada correctamente.' });
-    } catch (error) {
-        console.error('Error al eliminar la producción:', error);
-        res.status(500).json({ error: 'Error interno del servidor.' });
+// Borrar una producción por ID
+exports.deleteProduccion = async (req, res) => {
+  const { id } = req.params; // Extraemos el ID de los parámetros de la solicitud
+  try {
+    const produccion = await Producciones.findByPk(id); // Buscamos la producción por ID
+    
+    if (produccion) {
+      await produccion.destroy(); // Si se encuentra, eliminamos la producción
+      res.status(200).json({ message: "Producción eliminada exitosamente" }); // Respondemos con éxito
+    } else {
+      res.status(404).json({ message: "Producción no encontrada" }); // Si no se encuentra, devolvemos error 404
     }
+  } catch (error) {
+    console.error("Error al eliminar la producción:", error);
+    res.status(500).json({ message: "Error al eliminar la producción" });
+  }
+};
+
+
+// Filtrar producciones por título
+exports.filterByTitulo = async (req, res) => {
+  const { titulo } = req.query; // Obtenemos el título de los parámetros de consulta
+
+  try {
+    const producciones = await Producciones.findAll({
+      where: { titulo }, // Filtramos por título exacto
+      include: [
+        {
+          model: Generos,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+        {
+          model: Reparto,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+      ],
+    });
+
+    if (producciones.length > 0) {
+      res.status(200).json({
+        message: "Producciones encontradas",
+        producciones,
+      }); // Si se encuentran producciones, las devolvemos con un mensaje de éxito
+    } else {
+      res.status(404).json({ message: "No se encontraron producciones con el título proporcionado" }); // Si no, devolvemos error 404
+    }
+  } catch (error) {
+    console.error("Error al filtrar por título:", error);
+    res.status(500).json({ message: "Error al filtrar por título" });
+  }
+};
+
+
+// Filtrar producciones por género
+exports.filterByGenero = async (req, res) => {
+  const { genero_id } = req.query; // Obtenemos el ID del género de los parámetros de consulta
+
+  try {
+    const producciones = await Producciones.findAll({
+      include: [
+        {
+          model: Generos,
+          where: { genero_id }, // Filtramos por género
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+        {
+          model: Reparto,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+      ],
+    });
+
+    if (producciones.length > 0) {
+      res.status(200).json({
+        message: "Producciones encontradas",
+        producciones,
+      }); // Si se encuentran producciones, las devolvemos con un mensaje de éxito
+    } else {
+      res.status(404).json({ message: "No se encontraron producciones con el género proporcionado" }); // Si no, devolvemos error 404
+    }
+  } catch (error) {
+    console.error("Error al filtrar por género:", error);
+    res.status(500).json({ message: "Error al filtrar por género" });
+  }
+};
+
+
+// Filtrar producciones por categoría
+exports.filterByCategoria = async (req, res) => {
+  const { categoria_id } = req.query; // Obtenemos el ID de la categoría de los parámetros de consulta
+
+  try {
+    const producciones = await Producciones.findAll({
+      where: { categoria_id }, // Filtramos por categoría
+      include: [
+        {
+          model: Generos,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+        {
+          model: Reparto,
+          through: { attributes: [] }, // Excluimos atributos de la tabla intermedia
+        },
+      ],
+    });
+
+    if (producciones.length > 0) {
+      res.status(200).json({
+        message: "Producciones encontradas",
+        producciones,
+      }); // Si se encuentran producciones, las devolvemos con un mensaje de éxito
+    } else {
+      res.status(404).json({ message: "No se encontraron producciones con la categoría proporcionada" }); // Si no, devolvemos error 404
+    }
+  } catch (error) {
+    console.error("Error al filtrar por categoría:", error);
+    res.status(500).json({ message: "Error al filtrar por categoría" });
+  }
 };

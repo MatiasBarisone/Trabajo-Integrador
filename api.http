@@ -1,44 +1,61 @@
 //GET para obtener todas las producciones
 GET http://localhost:3000/producciones
 
-###
-//POST para crear una nueva produccion
+### Crear una nueva producción
 POST http://localhost:3000/nuevaProduccion
 Content-Type: application/json
 
 {
-  "titulo": "Alice In Borderlands",
-  "resumen": "Un joven obsesionado con los videojuegos, junto a dos amigos, quedan atrapados en una extraña versión de Tokio donde deberán competir para sobrevivir.",
-  "temporadas": 3,
-  "poster": "/posters/nueva.jpg",
-  "trailer": "https://www.youtube.com/watch?v=4hIK-LF5-40",
+  "titulo": "Nueva Producción",
   "categoria_id": 1,
-  "generos": ["Ciencia Ficción", "Aventura"],
-  "reparto": ["1", "2"]
+  "resumen": "Descripción de la nueva producción.",
+  "temporadas": 0,
+  "duracion": "45 minutos",
+  "trailer": "https://www.youtube.com/nuevo_trailer",
+  "poster": "./posters/nuevo_poster.jpg",
+  "generos": [1, 2],
+  "reparto": [5, 6]
 }
 
 ###
-//GET para obtener una produccion por ID
-GET http://localhost:3000/producciones/2
-
+//Obtener una produccion por ID
+GET http://localhost:3000/producciones/45
 ###
 
-//PUT para actualizar una produccion
-PUT  http://localhost:3000/updateProduccion/2
+//Actualizar una produccion por ID
+PUT  http://localhost:3000/updateProduccion/5
 Content-Type: application/json
 
 {
-  "titulo": "Alice In Borderlands",
-  "resumen": "Un joven obsesionado con los videojuegos, junto a dos amigos, quedan atrapados en una extraña versión de Tokio donde deberán competir para sobrevivir.",
-  "temporadas": 3,
-  "poster": "/posters/nueva.jpg",
-  "trailer": "https://www.youtube.com/watch?v=4hIK-LF5-40",
+  "titulo": "Uwu Producción",
   "categoria_id": 1,
-  "generos": ["Ciencia Ficción", "Aventura"],
-  "reparto": ["1", "2"]
+  "resumen": "Descripción de la nueva producción.",
+  "temporadas": 3,
+  "duracion": "45 minutos",
+  "trailer": "https://www.youtube.com/nuevo_trailer",
+  "poster": "./posters/nuevo_poster.jpg",
+  "generos": [1, 2],
+  "reparto": [3, 4]
 }
 
 ###
 
-//DELETE para eliminar una produccion
-DELETE http://localhost:3000/deleteProduccion/2
+//Eliminar una produccion
+DELETE http://localhost:3000/deleteProduccion/15
+
+
+###
+
+//Filtrar por titulo
+GET http://localhost:3000/producciones/filtrar/titulo?titulo=Guason
+
+###
+
+//Filtraro por genero
+GET http://localhost:3000/producciones/filtrar/genero?genero_id=2
+
+###
+
+//Filtrar por categoria
+GET http://localhost:3000/producciones/filtrar/categoria?categoria_id=1
+
