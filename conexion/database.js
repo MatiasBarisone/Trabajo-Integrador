@@ -1,18 +1,24 @@
 // Importamos Sequelize desde la librería sequelize
 const { Sequelize } = require("sequelize");
+require('dotenv').config();
 
 // Configuramos la conexión a la base de datos con Sequelize
-const sequelize = new Sequelize("trailerflix", "root", "pZbPUZvawCgLjveWQevfWWkOCWJojtDP", {
-  host: "junction.proxy.rlwy.net", // Servidor de la base de datos
-  port: 26663, // Especifica el puerto de conexión a MySQL (cámbialo si es necesario)
-  dialect: "mysql",  // Tipo de base de datos que estamos usando (MySQL)
-  define: {
-    timestamps: false, // Desactivar timestamps globalmente para todas las tablas
-  },
-  dialectOptions: {
-    connectTimeout: 60000 // Aumenta el tiempo de espera de conexión si persisten los problemas
+const sequelize = new Sequelize(
+  process.env.DB_NAME,           // Nombre de la base de datos
+  process.env.DB_USER,           // Usuario
+  process.env.DB_PASSWORD,       // Contraseña
+  {
+    host: process.env.DB_HOST,   // Servidor de la base de datos
+    port: process.env.DB_PORT,   // Puerto de conexión
+    dialect: "mysql",            // Tipo de base de datos que estamos usando (MySQL)
+    define: {
+      timestamps: false,         // Desactivar timestamps globalmente para todas las tablas
+    },
+    dialectOptions: {
+      connectTimeout: 60000      // Aumenta el tiempo de espera de conexión si persisten los problemas
+    }
   }
-});
+);
 
 // Autenticación de la conexión a la base de datos
 sequelize
