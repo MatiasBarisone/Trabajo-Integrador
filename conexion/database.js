@@ -2,13 +2,16 @@
 const { Sequelize } = require("sequelize");
 
 // Configuramos la conexión a la base de datos con Sequelize
-// Parámetros: nombre de la base de datos, usuario, contraseña, y detalles de conexión
-const sequelize = new Sequelize("trailerflix", "root", "15615913matias", {
-  host: "localhost", // Servidor de la base de datos
+const sequelize = new Sequelize("trailerflix", "root", "pZbPUZvawCgLjveWQevfWWkOCWJojtDP", {
+  host: "junction.proxy.rlwy.net", // Servidor de la base de datos
+  port: 26663, // Especifica el puerto de conexión a MySQL (cámbialo si es necesario)
   dialect: "mysql",  // Tipo de base de datos que estamos usando (MySQL)
   define: {
     timestamps: false, // Desactivar timestamps globalmente para todas las tablas
   },
+  dialectOptions: {
+    connectTimeout: 60000 // Aumenta el tiempo de espera de conexión si persisten los problemas
+  }
 });
 
 // Autenticación de la conexión a la base de datos
