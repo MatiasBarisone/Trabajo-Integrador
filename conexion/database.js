@@ -1,6 +1,10 @@
 // Importamos Sequelize desde la librería sequelize
 const { Sequelize } = require("sequelize");
-require('dotenv').config({ path: '.env.local' });
+const dotenv = require('dotenv')
+const ENV = process.env.NODE_ENV || 'local'
+dotenv.config({ path: `.env.${ENV}` })
+
+
 
 // Configuramos la conexión a la base de datos con Sequelize
 const sequelize = new Sequelize(
