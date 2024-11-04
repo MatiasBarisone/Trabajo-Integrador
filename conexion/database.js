@@ -1,21 +1,21 @@
 // Importamos Sequelize desde la librería sequelize
 const { Sequelize } = require("sequelize");
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 
 // Configuramos la conexión a la base de datos con Sequelize
 const sequelize = new Sequelize(
-  process.env.DB_NAME,           // Nombre de la base de datos
-  process.env.DB_USER,           // Usuario
-  process.env.DB_PASSWORD,       // Contraseña
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: process.env.DB_HOST,   // Servidor de la base de datos
-    port: process.env.DB_PORT,   // Puerto de conexión
-    dialect: "mysql",            // Tipo de base de datos que estamos usando (MySQL)
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: "mysql",
     define: {
-      timestamps: false,         // Desactivar timestamps globalmente para todas las tablas
+      timestamps: false,
     },
     dialectOptions: {
-      connectTimeout: 60000      // Aumenta el tiempo de espera de conexión si persisten los problemas
+      connectTimeout: 60000
     }
   }
 );
@@ -24,11 +24,11 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connected to MySQL database using Sequelize"); // Si la conexión es exitosa, muestra este mensaje
+    console.log("Connected to MySQL database using Sequelize");
   })
   .catch((err) => {
-    console.error("Unable to connect to the database:", err); // Si hay un error, lo muestra en la consola
+    console.error("Unable to connect to the database:", err);
   });
 
-// Exportamos la instancia de Sequelize para que esté disponible en otros archivos
+// Exportamos la instancia de Sequelize
 module.exports = sequelize;

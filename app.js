@@ -2,7 +2,6 @@ const express = require("express"); // Importar Express
 const app = express(); // Crear una instancia de Express
 const contenidoRoutes = require("./routes/contenidoRoutes"); // Importar las rutas para manejar el contenido
 const db = require("./conexion/database"); // Importar la conexión a la base de datos
-const sequelize = require("./conexion/database"); // (Este es redundante, puedes eliminarlo)
 
 // Middlewares
 app.use(express.json()); // Middleware para parsear JSON en las solicitudes
