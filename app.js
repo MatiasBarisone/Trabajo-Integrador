@@ -10,5 +10,5 @@ app.use("/", contenidoRoutes); // Usar las rutas de contenido en la raíz del se
 // Server
 const PORT = process.env.PORT || 3000; // Establecer el puerto, usando la variable de entorno PORT o 3000 por defecto
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port: http://localhost:${PORT}`); // Mensaje en consola para indicar que el servidor está corriendo
+  console.log(`Server funcionando en: http://localhost:${PORT}`); // Mensaje en consola para indicar que el servidor está corriendo
 });

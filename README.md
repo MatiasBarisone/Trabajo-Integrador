@@ -7,7 +7,6 @@ Trabajo Integrador Relacional
 * npm install sequelize
 * npm install mysql2
 
-Se usa nodemon para reiniciar automáticamente el servidor durante el desarrollo.
 
 ### Configuración de la Base de Datos
 En el archivo database.js, se configura la conexión a la base de datos, estableciendo timestamps: false de manera global. 

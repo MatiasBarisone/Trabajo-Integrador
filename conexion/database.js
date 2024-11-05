@@ -17,9 +17,6 @@ const sequelize = new Sequelize(
     dialect: "mysql",
     define: {
       timestamps: false,
-    },
-    dialectOptions: {
-      connectTimeout: 60000
     }
   }
 );
@@ -28,10 +25,10 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connected to MySQL database using Sequelize");
+    console.log("Conectado a la base de datos con exito!");
   })
   .catch((err) => {
-    console.error("Unable to connect to the database:", err);
+    console.error("Hubo un error al conectarse a la base de datos:", err);
   });
 
 // Exportamos la instancia de Sequelize

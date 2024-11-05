@@ -4,7 +4,7 @@ const Producciones = require("../models/producciones");
 const Reparto = require("../models/reparto");
 
 // Definición del modelo 'produccion_reparto' para manejar la tabla intermedia
-// en la relación Many-to-Many entre 'Producciones' y 'Reparto'
+
 const produccion_reparto = sequelize.define(
   "produccion_reparto",
   {

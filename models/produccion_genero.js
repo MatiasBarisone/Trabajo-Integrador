@@ -4,7 +4,7 @@ const Producciones = require("../models/producciones");
 const Generos = require("../models/generos");
 
 // Definición del modelo 'produccion_genero' para manejar la tabla intermedia
-// en la relación Many-to-Many entre 'Producciones' y 'Generos'
+
 const produccion_genero = sequelize.define(
   "produccion_genero",
   {

@@ -2,7 +2,7 @@ const Producciones = require("../models/producciones");
 const Generos = require("../models/generos");
 const Reparto = require("../models/reparto");
 
-//Obtener todas las
+//Obtener todas las producciones
 exports.getProducciones = async (req, res) => {
   try {
     const producciones = await Producciones.findAll({
@@ -71,7 +71,7 @@ exports.createProduccion = async (req, res) => {
       }
     );
 
-    res.status(201).json({
+    res.status(200).json({
       message: "Producción creada correctamente",
       produccion: produccionConRelaciones,
     });
